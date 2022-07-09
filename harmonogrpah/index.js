@@ -15,17 +15,24 @@ let DESC3 = 0;
 let ROTATE_DEG = 0;
 
 const DESC_MODE = false
-const ANIMATION_MODE = true
+const ANIMATION_MODE = false
+const RECORDING_FRAME_LIMIT = 60 * 10
 const LIMIT_FRAME = 3600
-const ZOOM_RATE = 1.6
+const ZOOM_RATE = 2
+
+/**
+ * colors
+ */
+const BACKGROUND_COLOR = '#020202'
+const STROKE_COLOR = '#FD070B'
 let lines = []
 
-function createLines() {
+function createLines(mod1, mod2) {
   for(let t = 0; t <= LIMIT_FRAME; t += 1) {
 
-    const pOri1 = [[cos(PI/180 * t * 90) * (100 - DESC1), sin(PI/180 * t * 90) * (100  - DESC1)]]
-    const pOri2 = [[cos(PI/180 * t) * (100 - DESC2), sin(PI/180 * t) * (100  - DESC2)]]
-    const pOri3 = [[cos(PI/180 * t) *  (100 - DESC3), sin(PI/180 * t) * (100 - DESC3)]]
+    const pOri1 = [[cos(PI/180 * t * (90 + (mod1 / 2))) * (60 - DESC1), sin(PI/180 * t * (90 + mod2)) * (60  - DESC1)]]
+    const pOri2 = [[cos(PI/180 * t) * (60  * mod1 - DESC2), sin(PI/180 * t) * (60 * mod1  - DESC2)]]
+    const pOri3 = [[cos(PI/180 * t) *  (60 * mod2 - DESC3), sin(PI/180 * t) * (60 * mod2 - DESC3)]]
      
     const [pendulem1] = sumMat(mulMat(pOri1, rotateMat(PI/180 * 90)), [[0, -height/3]])
     const [pendulem2] = sumMat(mulMat(pOri2, rotateMat(PI/180 * 45)), [[-width/3, height/3]])
@@ -33,7 +40,7 @@ function createLines() {
     
     const mid = sumMat(sumMat([pendulem1], [pendulem2]), [pendulem3])
     
-    // stroke(255,0,0)
+    // stroke(0,0,255)
     // strokeWeight(2)
     // point(pendulem1[0], pendulem1[1])
     // point(pendulem2[0], pendulem2[1])
@@ -52,27 +59,32 @@ function createLines() {
 
     ROTATE_DEG += 0.1
   }
+  ROTATE_DEG=0
 }
 
 function setup() {
-  createCanvas(1000, 1000);
+  createCanvas(600, 600);
+  frameRate(120)
   // createCanvas(1000, 1000, SVG);
-  pixelDensity(3)
-  noLoop()
-  background(0);
+  if(!ANIMATION_MODE) noLoop()
+  background(BACKGROUND_COLOR);
 }
 
 
 function draw() {
-  background(214, 213, 168);
+  if (ANIMATION_MODE && frameCount === 1) {
+    capturer.start();
+  }
+
+  background(BACKGROUND_COLOR);
   translate(width/2, height/2)
   strokeWeight(1);
 
   
-  createLines(sin(frameCount / PI / 30), cos(frameCount / PI / 90))
+  createLines(sin(PI / 180 * frameCount / 20), cos(PI / 180 * frameCount / 10))
   
   noFill()
-  stroke(27, 36, 48)
+  stroke(STROKE_COLOR)
   strokeWeight(1)
   beginShape()
   lines.forEach((line) => {
@@ -80,4 +92,13 @@ function draw() {
   })
   endShape()
 
+  if (ANIMATION_MODE) {
+    if (frameCount < RECORDING_FRAME_LIMIT) {
+      capturer.capture(canvas)
+    } else if (frameCount === RECORDING_FRAME_LIMIT) {
+      capturer.save();
+      capturer.stop();
+    }
+    lines = []
+  }
 }
