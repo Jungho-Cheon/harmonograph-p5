@@ -11,6 +11,21 @@
     <!-- <script src="https://unpkg.com/p5.js-svg@1.3.1" defer></script> -->
     <script src="./index.js" defer></script>
     <script src="./mat.js" defer></script>
+    <script src="./params.js" defer></script>
+    <script src="../ccapture/CCapture.js"></script>
+    <script src="../ccapture/tar.js"></script>
+    <script src="../ccapture/gif.js"></script>
+    <script src="../ccapture/gif.worker.js"></script>
+    <script src="../ccapture/webm-writer-0.2.0.js"></script>
+    <script src="../ccapture/download.js" ></script>
+    <script>
+        const fps = 60;
+        const capturer = new CCapture({
+            format: 'webm',
+            framerate: fps,
+            verbose: true
+        });
+    </script>
     <style>
         html, body {
             margin: 0;
@@ -23,13 +38,16 @@
             background-color: cornsilk;
             padding: 8px;
         }
-        #panel .input-container p {
+        #panel .input-container p, #panel .radio-container p {
             display: inline-block;
             width: 140px;
             margin: 8px;
         }
         #panel .input-container input {
             width: 300px;
+        }
+        #panel .radio-container input {
+            display: inline-block;
         }
     </style>
 </head>
@@ -38,20 +56,5 @@
         <div id="root"></div>
         <div id="panel"></div>
     </main>
-    
-    <script src="../ccapture/CCapture.js"></script>
-    <script src="../ccapture/tar.js"></script>
-    <script src="../ccapture/gif.js"></script>
-    <script src="../ccapture/gif.worker.js"></script>
-    <script src="../ccapture/webm-writer-0.2.0.js"></script>
-    <script src="../ccapture/download.js"></script>
-    <script>
-        const fps = 60;
-        const capturer = new CCapture({
-            format: 'webm',
-            framerate: fps,
-            verbose: true
-        });
-    </script>
 </body>
 </html>
