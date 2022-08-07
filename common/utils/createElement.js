@@ -10,7 +10,14 @@ const _createCheckBox = ({ name, initial }) => {
 
   return checkBox;
 };
-const _createSlider = ({ name, min, max, initial, step = 0.1 }) => {
+const _createSlider = ({
+  name,
+  min,
+  max,
+  initial,
+  step = 0.1,
+  selectable = false,
+}) => {
   const panel = document.getElementById('panel');
   const inputContainer = document.createElement('div');
 
@@ -23,7 +30,7 @@ const _createSlider = ({ name, min, max, initial, step = 0.1 }) => {
   panel.appendChild(inputContainer);
 
   valueInput.input(
-    debounce(e => {
+    debounce((e) => {
       const { value } = e.target;
       if (Number.isNaN(value)) return;
 
@@ -41,6 +48,25 @@ const _createSlider = ({ name, min, max, initial, step = 0.1 }) => {
   );
   slider.valueInput = valueInput;
 
+  if (selectable) {
+    const checkBox = createCheckbox().parent(inputContainer);
+    checkBox.addClass('selectable-checkbox');
+    checkBox.changed(
+      debounce(() => {
+        redraw();
+      }, DEBOUNCE_MILLI)
+    );
+    slider.checkBox = checkBox;
+  }
+
+  slider.getValue = ({ index, total }) => {
+    if (slider.checkBox?.checked()) {
+      if (index === undefined || total === undefined)
+        throw new Error('index not found');
+      return (slider.value() / total) * index;
+    }
+    return slider.value();
+  };
   return slider;
 };
 const _createRadio = ({ name, initial, options }) => {
@@ -51,7 +77,7 @@ const _createRadio = ({ name, initial, options }) => {
   createP(name).parent(radioContainer);
   const radio = createRadio(name).parent(radioContainer);
 
-  options.forEach(option => {
+  options.forEach((option) => {
     radio.option(option);
   });
 

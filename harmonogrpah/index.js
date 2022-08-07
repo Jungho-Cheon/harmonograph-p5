@@ -7,7 +7,6 @@ const scaleFromCenter = (x, y, scale) => {
 
 const RECORDING_FRAME_LIMIT = 60 * 10;
 
-
 function createLines(mod1 = 0, mod2 = 0) {
   const lines = [];
   /*
@@ -58,7 +57,7 @@ function createLines(mod1 = 0, mod2 = 0) {
   for (let t = 0; t <= Number(LIMIT_FRAME.value()); t += 1) {
     const pOri1 = [
       [
-        mod1 * cos(
+        cos(
           (PI / 180) *
             t *
             THETA_AMP_1_1.value() *
@@ -83,7 +82,7 @@ function createLines(mod1 = 0, mod2 = 0) {
             t *
             THETA_AMP_2_1.value() *
             (1 / THETA_AMP_DIV_2_1.value()) +
-            (PI / 180) * (THETA_PHASE_2_1.value())
+            (PI / 180) * THETA_PHASE_2_1.value()
         ) *
           (AMP_2_1.value() - DESC_2_1),
         sin(
@@ -91,7 +90,7 @@ function createLines(mod1 = 0, mod2 = 0) {
             t *
             THETA_AMP_2_2.value() *
             (1 / THETA_AMP_DIV_2_2.value()) +
-            (PI / 180) * (THETA_PHASE_2_2.value())
+            (PI / 180) * THETA_PHASE_2_2.value()
         ) *
           (AMP_2_2.value() - DESC_2_2),
       ],
@@ -117,15 +116,18 @@ function createLines(mod1 = 0, mod2 = 0) {
       ],
     ];
 
-    const [pendulem1] = sumMat(mulMat(pOri1, rotateMat((PI / 180) * (90 + ROTATE_1.value() + mod1))), [
-      [0, -height / 3],
-    ]);
-    const [pendulem2] = sumMat(mulMat(pOri2, rotateMat((PI / 180) * (45 + ROTATE_2.value() + mod2))), [
-      [-width / 3, height / 3],
-    ]);
-    const [pendulem3] = sumMat(mulMat(pOri3, rotateMat((PI / 180) * (-45 + ROTATE_3.value()))), [
-      [width / 3, height / 3],
-    ]);
+    const [pendulem1] = sumMat(
+      mulMat(pOri1, rotateMat((PI / 180) * (90 + ROTATE_1.value()))),
+      [[0, -height / 3]]
+    );
+    const [pendulem2] = sumMat(
+      mulMat(pOri2, rotateMat((PI / 180) * (45 + ROTATE_2.value()))),
+      [[-width / 3, height / 3]]
+    );
+    const [pendulem3] = sumMat(
+      mulMat(pOri3, rotateMat((PI / 180) * (-45 + ROTATE_3.value()))),
+      [[width / 3, height / 3]]
+    );
 
     const mid = sumMat(sumMat([pendulem1], [pendulem2]), [pendulem3]);
 
@@ -139,7 +141,10 @@ function createLines(mod1 = 0, mod2 = 0) {
       pop();
     }
 
-    const [rotateResult] = mulMat(mid, rotateMat((PI / 180) * (ROTATE_DEG + STROKE_ROTATE.value())));
+    const [rotateResult] = mulMat(
+      mid,
+      rotateMat((PI / 180) * (ROTATE_DEG + STROKE_ROTATE.value()))
+    );
     const { x, y } = scaleFromCenter(
       (rotateResult[0] * 2) / 5,
       (rotateResult[1] * 2) / 5,
@@ -168,15 +173,13 @@ function setup() {
   initParams();
   initButtons();
   const { BACKGROUND_COLOR } = params;
-  const canvas = createCanvas(800, 1024, SVG);
+  const canvas = createCanvas(800, 1024);
   canvas.parent('root');
   frameRate(120);
   // createCanvas(1000, 1000, SVG);
-  // noLoop();
+  noLoop();
 
   background(BACKGROUND_COLOR.value());
-
-
 }
 
 function draw() {
@@ -190,19 +193,18 @@ function draw() {
   strokeWeight(1);
 
   const lines = createLines(
-    sin(((PI / 180) * millis() / 100)),
-    cos(((PI / 180) * millis() / 100))
+    sin(((PI / 180) * millis()) / 100),
+    cos(((PI / 180) * millis()) / 100)
   );
 
   noFill();
   stroke(STROKE_COLOR.value());
   strokeWeight(1);
   beginShape();
-  lines.forEach(line => {
+  lines.forEach((line) => {
     vertex(line.x, line.y);
   });
   endShape();
-
 
   if (params.ANIMATION_MODE.checked()) {
     if (frameCount < RECORDING_FRAME_LIMIT) {
