@@ -58,7 +58,7 @@ function createLines(mod1 = 0, mod2 = 0) {
   for (let t = 0; t <= Number(LIMIT_FRAME.value()); t += 1) {
     const pOri1 = [
       [
-        cos(
+        mod1 * cos(
           (PI / 180) *
             t *
             THETA_AMP_1_1.value() *
@@ -168,7 +168,7 @@ function setup() {
   initParams();
   initButtons();
   const { BACKGROUND_COLOR } = params;
-  const canvas = createCanvas(800, 1024);
+  const canvas = createCanvas(800, 1024, SVG);
   canvas.parent('root');
   frameRate(120);
   // createCanvas(1000, 1000, SVG);
@@ -190,8 +190,8 @@ function draw() {
   strokeWeight(1);
 
   const lines = createLines(
-    sin(((PI / 180) * millis() / 100)) * 90,
-    cos(((PI / 180) * millis() / 100)) * 90
+    sin(((PI / 180) * millis() / 100)),
+    cos(((PI / 180) * millis() / 100))
   );
 
   noFill();
@@ -202,6 +202,7 @@ function draw() {
     vertex(line.x, line.y);
   });
   endShape();
+
 
   if (params.ANIMATION_MODE.checked()) {
     if (frameCount < RECORDING_FRAME_LIMIT) {
