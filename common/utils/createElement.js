@@ -63,7 +63,11 @@ const _createSlider = ({
     if (slider.checkBox?.checked()) {
       if (index === undefined || total === undefined)
         throw new Error('index not found');
-      return (slider.value() / total) * index;
+      return (
+        (slider.value() *
+          (Math.max(index, total - index) - Math.ceil(total / 2))) /
+        Math.ceil(total / 2)
+      );
     }
     return slider.value();
   };

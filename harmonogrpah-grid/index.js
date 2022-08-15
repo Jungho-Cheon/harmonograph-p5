@@ -183,8 +183,8 @@ const createLines = ({ row, col }) => {
     THETA_PHASE_3_2,
   } = params;
 
-  const index = COLS.value() * row + col + 1;
-  const total = ROWS.value() * COLS.value();
+  const index = COLS.value() * row + col;
+  const total = ROWS.value() * COLS.value() - 1;
 
   for (let t = 0; t <= Number(LIMIT_FRAME.value()); t += 1) {
     const pOri1 = [
@@ -447,11 +447,9 @@ function setup() {
   const { BACKGROUND_COLOR } = params;
   const canvas = createCanvas(800, 1024);
   canvas.parent('root');
-  frameRate(120);
-  // createCanvas(1000, 1000, SVG);
   noLoop();
 
-  background(BACKGROUND_COLOR.value());
+  // background(BACKGROUND_COLOR.value());
 }
 
 function draw() {
